@@ -22,16 +22,15 @@ def client_get(sock, file_name):
     '''
     downloads file from server to client
     '''
-    # server_files list
-    server_files = dir_list = os.listdir(SERVER_FILES_DIR)
+    # receive valid file indicator from server
+    file_check_size = int(data_handling.receive_data(sock, 10))
+    file_check = data_handling.receive_data(sock, file_check_size)
+
     # check if file in server_files
-    if file_name not in server_files:
+    if file_check == '/FileNotFound':
         print(f'{file_name} does not exist in server')
         data_handling.send_data(sock, '/FileNotFound')
         return
-
-    # send name of file to download from server
-    data_handling.send_data(sock, file_name)
 
     # get file size
     file_size = int(data_handling.receive_data(sock, 10))
@@ -60,6 +59,8 @@ def client_put(sock, file_name):
         print(f'{file_name} does not exist in client')
         data_handling.send_data(sock, '/FileNotFound')
         return
+    else:
+        data_handling.send_data(sock, '/ValidFile')
 
     print(f'Uploading {file_name} to server...')
 
@@ -97,14 +98,12 @@ def server_get(sock, file_name):
     '''
     downloads file from server to client
     '''
-    # receive file name size from client
-    file_name_size = int(data_handling.receive_data(sock, 10))
-    # receive file name from client
-    file_name = data_handling.receive_data(sock, file_name_size)
-
-    # check if valid file
-    if file_name == '/FileNotFound':
+    # check if file in server_files
+    if file_name not in os.listdir(SERVER_FILES_DIR):
+        data_handling.send_data(sock, '/FileNotFound')
         return 0
+    else:
+        data_handling.send_data(sock, '/ValidFile')
 
     # open file from server_files
     file = open(os.path.join(SERVER_FILES_DIR, file_name), 'r')
@@ -117,13 +116,12 @@ def server_put(sock, file_name):
     '''
     uploads file to server from client
     '''
-    # receive file name size from client
-    file_name_size = int(data_handling.receive_data(sock, 10))
-    # receive file name from client
-    file_name = data_handling.receive_data(sock, file_name_size)
+    # receive valid file indicator from client
+    file_check_size = int(data_handling.receive_data(sock, 10))
+    file_check = data_handling.receive_data(sock, file_check_size)
 
-    # check if valid file
-    if file_name == '/FileNotFound':
+    # check if file in client_files
+    if file_check == '/FileNotFound':
         return 0
 
     # receive file size from client
