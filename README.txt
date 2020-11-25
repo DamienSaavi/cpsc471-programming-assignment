@@ -10,7 +10,7 @@
 1. Navigate to directory in terminal
 
 2. Run server
-   `$ python server.py <SERVER PORT`
+   `$ python server.py <SERVER PORT>`
    ex. `$ python server.py 1234`
 
 3. Run client
