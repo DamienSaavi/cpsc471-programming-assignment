@@ -17,30 +17,23 @@ def execute_cmd(cmd, sock):
         except:
             print(f'USAGE: ftp> get <FILE NAME>')
             return
-
     # put command
     elif cmd[0] == cmds.CMDS[1]:
+        # check file name
+        if len(cmd) > 2:
+            print('Make sure file name has no spaces')
+            return
         try:
             cmds.client_put(sock, cmd[1])
         except:
             print(f'USAGE: ftp> put <FILE NAME>')
             return
-
     # ls command
     elif cmd[0] == cmds.CMDS[2]:
         cmds.client_ls(sock)
-
     # quit command
     elif cmd[0] == cmds.CMDS[3]:
         cmds.client_quit(sock)
-
-    # invalid command check
-    else:
-        print(
-            f'Invalid command: \'{cmd[0]}\'\n'
-            f'Available commands: {cmds.CMDS}'
-        )
-        return
 
 def main():
     # check correct number of arguments
@@ -64,18 +57,28 @@ def main():
         # check empty input
         if not cmd:
             continue
+        # check file name
+        if len(cmd.split()) > 2:
+            print('Make sure file name has no spaces')
+            continue
 
         # send command to server
         data_handling.send_data(client_socket, cmd)
 
-        # split 'cmd' so that:
+        # split 'cmd' into list:
         #   cmd[0]: command
         #   cmd[1]: <FILE NAME> if exists
         cmd = cmd.split()
+
+        # execute command
         if cmd[0] in cmds.CMDS:
             execute_cmd(cmd, client_socket)
+        # invalid command check
         else:
-            break
+            print(
+                f'Invalid command: \'{cmd[0]}\'\n'
+                f'Available commands: {cmds.CMDS}'
+            )
 
 if __name__ == '__main__':
     main()

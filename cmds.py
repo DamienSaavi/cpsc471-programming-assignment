@@ -22,15 +22,21 @@ def client_get(sock, file_name):
     '''
     downloads file from server to client
     '''
+    # server_files list
+    server_files = dir_list = os.listdir(SERVER_FILES_DIR)
+    # check if file in server_files
+    if file_name not in server_files:
+        print(f'{file_name} does not exist in server')
+        data_handling.send_data(sock, '/FileNotFound')
+        return
+
     # send name of file to download from server
-    sock.send(file_name.encode())
+    data_handling.send_data(sock, file_name)
 
-    # receive first 10 bytes (file size indicator)
-    file_size_buffer = data_handling.receive_data(sock, 10)
     # get file size
-    file_size = int(file_size_buffer)
+    file_size = int(data_handling.receive_data(sock, 10))
 
-    print(f'Downloading file: {file_name} (Size: {file_size}) from server...')
+    print(f'Downloading {file_name} (Size: {file_size} B) from server...')
 
     # receive file data
     file_data = data_handling.receive_data(sock, file_size)
@@ -39,11 +45,33 @@ def client_get(sock, file_name):
     file_path = os.path.join(CLIENT_FILES_DIR, file_name)
     file = open(file_path, 'w')
     file.write(file_data)
+    file.close()
 
-def client_put(sock):
+    print(f'Succesfully downloaded {file_name} from server')
+
+def client_put(sock, file_name):
     '''
     uploads file to the server from client
     '''
+    # client_files list
+    client_files = dir_list = os.listdir(CLIENT_FILES_DIR)
+    # check if file in cient_files
+    if file_name not in client_files:
+        print(f'{file_name} does not exist in client')
+        data_handling.send_data(sock, '/FileNotFound')
+        return
+
+    print(f'Uploading {file_name} to server...')
+
+    # send name of file to upload to server
+    data_handling.send_data(sock, file_name)
+
+    # open file from client_files
+    file = open(os.path.join(CLIENT_FILES_DIR, file_name), 'r')
+    # send file to server
+    data_handling.send_file(sock, file)
+
+    print(f'Successfully uploaded {file_name} to server')
 
 def client_ls(sock):
     '''
@@ -69,11 +97,47 @@ def server_get(sock, file_name):
     '''
     downloads file from server to client
     '''
+    # receive file name size from client
+    file_name_size = int(data_handling.receive_data(sock, 10))
+    # receive file name from client
+    file_name = data_handling.receive_data(sock, file_name_size)
+
+    # check if valid file
+    if file_name == '/FileNotFound':
+        return 0
+
+    # open file from server_files
+    file = open(os.path.join(SERVER_FILES_DIR, file_name), 'r')
+    # send file to client
+    data_handling.send_file(sock, file)
+
+    return 1
 
 def server_put(sock, file_name):
     '''
     uploads file to server from client
     '''
+    # receive file name size from client
+    file_name_size = int(data_handling.receive_data(sock, 10))
+    # receive file name from client
+    file_name = data_handling.receive_data(sock, file_name_size)
+
+    # check if valid file
+    if file_name == '/FileNotFound':
+        return 0
+
+    # receive file size from client
+    file_size = int(data_handling.receive_data(sock, 10))
+    # receive file from client
+    file_data = data_handling.receive_data(sock, file_size)
+
+    # create file with received data in server_files directory
+    file_path = os.path.join(SERVER_FILES_DIR, file_name)
+    file = open(file_path, 'w')
+    file.write(file_data)
+    file.close()
+
+    return 1
 
 def server_ls(sock):
     '''
