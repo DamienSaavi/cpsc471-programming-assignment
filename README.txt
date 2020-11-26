@@ -3,6 +3,7 @@
 #### Team Members: ###
 - Justin Do (justinkhado@csu.fullerton.edu)
 - Damien Mousavi (kahrenmousavi@csu.fullerton.edu)
+- James Samawi 
 
 #### Programming Language: ###
 - Python
