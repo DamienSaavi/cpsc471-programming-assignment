@@ -2,11 +2,14 @@
 
 #### Team Members: ###
 - Justin Do (justinkhado@csu.fullerton.edu)
+- Damien Mousavi (kahrenmousavi@csu.fullerton.edu)
 
 #### Programming Language: ###
 - Python
 
-#### How to execute: ###
+#### How to execute: ###f
+In a Linux environment:
+
 1. Navigate to directory in terminal
 
 2. Run server
