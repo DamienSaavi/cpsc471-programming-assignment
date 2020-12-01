@@ -64,9 +64,6 @@ def client_put(sock, file_name):
 
     print(f'Uploading {file_name} to server...')
 
-    # send name of file to upload to server
-    data_handling.send_data(sock, file_name)
-
     # open file from client_files
     file = open(os.path.join(CLIENT_FILES_DIR, file_name), 'r')
     # send file to server
