@@ -1,6 +1,8 @@
 import os
 import data_handling
 
+HEADER_SIZE = data_handling.HEADER_SIZE
+
 # ******************************************************************************
 # Available commands
 # ******************************************************************************
@@ -23,7 +25,7 @@ def client_get(sock, file_name):
     downloads file from server to client
     '''
     # receive valid file indicator from server
-    file_check_size = int(data_handling.receive_data(sock, 10))
+    file_check_size = int(data_handling.receive_data(sock, HEADER_SIZE))
     file_check = data_handling.receive_data(sock, file_check_size)
 
     # check if file in server_files
@@ -33,7 +35,7 @@ def client_get(sock, file_name):
         return
 
     # get file size
-    file_size = int(data_handling.receive_data(sock, 10))
+    file_size = int(data_handling.receive_data(sock, HEADER_SIZE))
 
     print(f'Downloading {file_name} (Size: {file_size} B) from server...')
 
@@ -64,9 +66,6 @@ def client_put(sock, file_name):
 
     print(f'Uploading {file_name} to server...')
 
-    # send name of file to upload to server
-    data_handling.send_data(sock, file_name)
-
     # open file from client_files
     file = open(os.path.join(CLIENT_FILES_DIR, file_name), 'r')
     # send file to server
@@ -78,7 +77,7 @@ def client_ls(sock):
     '''
     lists files on server
     '''
-    files_list_size = int(data_handling.receive_data(sock, 10))
+    files_list_size = int(data_handling.receive_data(sock, HEADER_SIZE))
     files_list = data_handling.receive_data(sock, files_list_size)
     for file in files_list.split('/'):
         print(file)
@@ -117,7 +116,7 @@ def server_put(sock, file_name):
     uploads file to server from client
     '''
     # receive valid file indicator from client
-    file_check_size = int(data_handling.receive_data(sock, 10))
+    file_check_size = int(data_handling.receive_data(sock, HEADER_SIZE))
     file_check = data_handling.receive_data(sock, file_check_size)
 
     # check if file in client_files
@@ -125,7 +124,7 @@ def server_put(sock, file_name):
         return 0
 
     # receive file size from client
-    file_size = int(data_handling.receive_data(sock, 10))
+    file_size = int(data_handling.receive_data(sock, HEADER_SIZE))
     # receive file from client
     file_data = data_handling.receive_data(sock, file_size)
 

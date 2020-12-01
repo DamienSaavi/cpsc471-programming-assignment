@@ -2,6 +2,8 @@
 helper functions for handling incoming or outgoing data
 '''
 
+HEADER_SIZE = 10
+
 def receive_data(sock, num_bytes):
     '''
     return the received num_bytes of data obtained from socket
@@ -32,7 +34,7 @@ def send_data(sock, data):
     data_size = str(len(data))
 
     # add 0's to data_size until 10 bytes
-    while len(data_size) < 10:
+    while len(data_size) < HEADER_SIZE:
         data_size = '0' + data_size
 
     # add data_size header to data

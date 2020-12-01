@@ -4,6 +4,8 @@ import socket
 import cmds
 import data_handling
 
+HEADER_SIZE = data_handling.HEADER_SIZE
+
 def main():
     # check correct number of arguments
     if len(sys.argv) < 2:
@@ -31,7 +33,7 @@ def main():
         # keep connection open until client issues 'quit' command
         while True:
             # receive command header
-            cmd_size = int(data_handling.receive_data(client_socket, 10))
+            cmd_size = int(data_handling.receive_data(client_socket, HEADER_SIZE))
             # receive command
             cmd = data_handling.receive_data(client_socket, cmd_size)
             # split 'cmd' so that:
