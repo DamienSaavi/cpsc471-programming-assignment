@@ -30,5 +30,6 @@ In a Linux environment:
     - `ftp> quit`              : disconnects from the server and exits
 
 
-NOTE: After client disconnects from server, server will wait for new connection.
-      User can KeyboardInterrupt (CTRL+C) or force close to stop the server.
+NOTE: - The client and server's root directory are /client_files and /server_files respectively. For more info and adjustments see code comments.
+      - After client disconnects from server, server will wait for new connection.
+      - User can KeyboardInterrupt (CTRL+C) or force close to stop the server.
